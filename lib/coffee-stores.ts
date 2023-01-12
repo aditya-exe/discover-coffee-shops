@@ -2,7 +2,7 @@ export const options = {
   method: 'GET',
   headers: {
     accept: 'application/json',
-    Authorization: 'fsq3pCnaTi2G2Ql3QurfWdHZXjFCPjcPnps9LHYkqipeQbw='
+    Authorization: process.env.FSQ_API
   }
 };
 

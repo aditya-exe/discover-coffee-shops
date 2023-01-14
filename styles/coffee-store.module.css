@@ -41,14 +41,14 @@
   padding-bottom: 1rem /* 16px */;
 }
 
-.storeImg {
+.storeImage {
   box-shadow: var(0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 #0000),
     0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 #0000,
     0 25px 50px -12px rgba(0, 0, 0, 0.25);
 
   border-radius: 0.75rem /* 12px */;
   max-width: 100%;
-  height: auto;
+  /* height: auto; */
   vertical-align: middle;
   border-style: none;
 }

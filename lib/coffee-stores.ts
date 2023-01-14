@@ -2,11 +2,12 @@ export const options = {
   method: 'GET',
   headers: {
     accept: 'application/json',
-    Authorization: process.env.FSQ_API
+    // Authorization: "fsq3pCnaTi2G2Ql3QurfWdHZXjFCPjcPnps9LHYkqipeQbw="
+    Authorization: process.env.NEXT_PUBLIC_FSQ_API as string
   }
 };
 
-const getImages = async (fsq_id: string) => {
+export const fetchStoreImages = async (fsq_id: string) => {
   const res = await fetch(`https://api.foursquare.com/v3/places/${fsq_id}/photos?limit=5&sort=POPULAR&classifications=indoor`, options);
   let data = await res.json();
   data = await data;
@@ -20,16 +21,18 @@ const getImages = async (fsq_id: string) => {
   return imageUrl;
 }
 
-export const fetchCoffeeStores = async () => {
-  const response = await fetch('https://api.foursquare.com/v3/places/search?query=coffee&ll=41.8781%2C-87.6298&limit=6', options);
+const getUrlForCoffeeStores = (latLong: string, query: string, limit: string) => {
+  return `https://api.foursquare.com/v3/places/search?query=${query}&ll=${latLong}&limit=${limit}`
+}
+
+//"41.8781%2C-87.6298"
+export const fetchCoffeeStores = async (latLong: string = "41.8781%2C-87.6298", limit: number = 6) => {
+  const response = await fetch(getUrlForCoffeeStores(latLong, "coffee", limit.toString()), options);
   const res = await response.json();
-  let data: any = [];
   const results = await res.results;
-  // console.log(results);
+  let data: any = [];
   results.map(async (res: any) => {
-    const imageUrl = await getImages(res.fsq_id);
     const x = {
-      imageUrl,
       fsq_id: res.fsq_id,
       name: res.name,
       address: res.location.address,
@@ -37,6 +40,11 @@ export const fetchCoffeeStores = async () => {
     }
     data.push(x);
   })
-  // console.log(data);
+
+  for (let i = 0; i < data.length; i++) {
+    const image = await fetchStoreImages(data[i].fsq_id);
+    data[i].imageUrl = image;
+  }
+
   return data;
 }

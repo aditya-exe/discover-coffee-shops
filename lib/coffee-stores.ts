@@ -1,3 +1,5 @@
+import { CoffeeStoreType } from "../context/context";
+
 export const options = {
   method: 'GET',
   headers: {
@@ -7,7 +9,7 @@ export const options = {
   }
 };
 
-export const fetchStoreImages = async (fsq_id: string) => {
+export async function fetchStoreImages(fsq_id: string) {
   const res = await fetch(`https://api.foursquare.com/v3/places/${fsq_id}/photos?limit=5&sort=POPULAR&classifications=indoor`, options);
   let data = await res.json();
   data = await data;
@@ -21,12 +23,12 @@ export const fetchStoreImages = async (fsq_id: string) => {
   return imageUrl;
 }
 
-const getUrlForCoffeeStores = (latLong: string, query: string, limit: string) => {
-  return `https://api.foursquare.com/v3/places/search?query=${query}&ll=${latLong}&limit=${limit}`
+function getUrlForCoffeeStores(latLong: string, query: string, limit: string) {
+  return `https://api.foursquare.com/v3/places/search?query=${query}&ll=${latLong}&limit=${limit}`;
 }
 
 //"41.8781%2C-87.6298"
-export const fetchCoffeeStores = async (latLong: string = "41.8781%2C-87.6298", limit: number = 6) => {
+export async function fetchCoffeeStores(latLong: string = "41.8781%2C-87.6298", limit: number = 6): Promise<CoffeeStoreType[]> {
   const response = await fetch(getUrlForCoffeeStores(latLong, "coffee", limit.toString()), options);
   const res = await response.json();
   const results = await res.results;
@@ -36,10 +38,11 @@ export const fetchCoffeeStores = async (latLong: string = "41.8781%2C-87.6298", 
       fsq_id: res.fsq_id,
       name: res.name,
       address: res.location.address,
-      neighborhood: res?.location?.neighborhood[0]
-    }
+      neighborhood: res?.location?.neighborhood[0],
+      votes: 0,
+    };
     data.push(x);
-  })
+  });
 
   for (let i = 0; i < data.length; i++) {
     const image = await fetchStoreImages(data[i].fsq_id);
